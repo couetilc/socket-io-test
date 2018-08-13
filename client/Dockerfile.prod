@@ -1,0 +1,13 @@
+# build environment
+RUN node:10-alpine as react-builder
+RUN mkdir -p /home/app
+WORKDIR /home/app
+ENV PATH /home/app/node_modules/.bin$PATH
+COPY react-app/package.json /home/app/
+RUN yarn build
+
+# production environment
+FROM nginx:10-alpine
+COPY --from=react-builder /home/app/build/ /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", daemon off;"]

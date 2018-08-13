@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+    client:
+        container_name: react-client 
+        build:
+            context: ./client
+            dockerfile: Dockerfile
+        volumes: 
+            - './client/react-app:/home/app/'
+            - '/home/app/node_modules'
+        ports:
+            - '7444:3000'
+        environment:
+            NODE_ENV: development
+            PORT: 3000 
+        depends_on:
+            - server
+        links:
+            - server
+    server:
+        container_name: node-server
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        restart: always
+        volumes: 
+            - './server/node-socket:/home/node-socket/'
+            - '/home/node-socket/node_modules'
+        ports:
+            - '2000:3000'
+        # expose to other containers, not host.
+        expose:
+            - 3000
+        environment:
+            NODE_ENV: development
+            PORT: 3000
